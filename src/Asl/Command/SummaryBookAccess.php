@@ -33,27 +33,18 @@ class SummaryBookAccess extends AbstractCommand
 
     protected function execute (InputInterface $input, OutputInterface $output)
     {
-        $this->_initConfig();
-        $this->_initReader($input->getArgument('log_file'));
+        $this->_iterateLogFile($input, $output);
 
-        $date = $input->getArgument('date');
-        $date = (is_null($date)) ? '.*': $date;
-        $date = str_replace('/', '\/', $date);
-        $conf = $this->getValues()['headers'];
-
-        $books = [];
-
-        while ($row = $this->reader->getParser()->parse()) {
-            if ($this->reader->getParser()->getNumberOfRow() === 1) continue;
-            if (! preg_match("/$date/", $row[$conf['date']])) continue;
-
-            if (! isset($books[$row[$conf['book']]])) $books[$row[$conf['book']]] = 0;
-            $books[$row[$conf['book']]] += $row[$conf['access']];
-        }
-
-        arsort($books);
-        foreach ($books as $k => $b) {
+        arsort($this->summary);
+        foreach ($this->summary as $k => $b) {
             echo sprintf('"%s","%s"', $k, $b).PHP_EOL;
         }
+    }
+
+
+    protected function _parse ($row)
+    {
+        if (! isset($this->summary[$row[$this->conf['book']]])) $this->summary[$row[$this->conf['book']]] = 0;
+        $this->summary[$row[$this->conf['book']]] += $row[$this->conf['access']];
     }
 }

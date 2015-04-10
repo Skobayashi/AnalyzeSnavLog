@@ -24,6 +24,7 @@ Temporary Items
 
 # AnalyzeSnavLog
 bin/*
+build/*
 !bin/asl
 vendor/*
 
