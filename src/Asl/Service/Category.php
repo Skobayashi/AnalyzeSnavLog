@@ -6,6 +6,24 @@ namespace Asl\Service;
 class Category
 {
 
+    const PARTS     = 'パーツマニュアル';
+    const ST        = 'サービステキスト';
+    const SM        = 'サービスマニュアル';
+    const OPT       = 'オプション取付要領書';
+    const OM        = '取扱説明書';
+    const ENG_SM    = 'エンジンワークショップマニュアル';
+    const ENG_OM    = 'エンジン取扱説明書';
+    const ENG_PARTS = 'エンジンパーツマニュアル';
+    const SN        = 'サービスニュース';
+    const HIJ       = '品質情報連絡表';
+    const SW        = 'サービスワークシート';
+    const CKAA      = '改良工事指示書';
+    const NINKA     = '許認可';
+    const GUIDE     = 'メンテナンスガイド';
+    const TROUBE    = '修理事例集';
+    const OTHER     = 'その他';
+
+
     /**
      * ブック名からカテゴリを導き出す
      *
@@ -15,43 +33,51 @@ class Category
     public static function convert ($book_name)
     {
         if (substr($book_name, 0, 4) == 'WCLA') {
-            $c = 'パーツマニュアル';
+            $c = self::PARTS;
         } elseif (substr($book_name, 0, 4) == 'WCLC') {
-            $c = 'パーツマニュアル';
+            $c = self::PARTS;
         } elseif (substr($book_name, 0, 4) == 'WCLB') {
-            $c = 'パーツマニュアル';
+            $c = self::PARTS;
+        } elseif (substr($book_name, 0, 4) == 'WCLF') {
+            $c = self::PARTS;
         } elseif (substr($book_name, 0, 5) == 'PMACS') {
-            $c = 'パーツマニュアル';
+            $c = self::PARTS;
+        } elseif (preg_match('/^WCL\d{3}(C|\d)/', $book_name)) {
+            $c = self::PARTS;
         } elseif (substr($book_name, 0, 4) == 'WLST') {
-            $c = 'サービステキスト';
+            $c = self::ST;
         } elseif (substr($book_name, 0, 4) == 'WLSM') {
-            $c = 'サービスマニュアル';
+            $c = self::SM;
+        } elseif (substr($book_name, 0, 3) == 'WHE') {
+            $c = self::SM;
         } elseif (substr($book_name, 0, 5) == 'WLOPT') {
-            $c = 'オプション取付要領書';
+            $c = self::OPT;
         } elseif (substr($book_name, 0, 3) == 'WDL') {
-            $c = '取扱説明書';
+            $c = self::OM;
+        } elseif (substr($book_name, 0, 3) == 'WDE') {
+            $c = self::OM;
         } elseif (substr($book_name, 0, 4) == 'WSM_') {
-            $c = 'エンジンワークショップマニュアル';
+            $c = self::ENG_SM;
         } elseif (preg_match('/_OM$/', $book_name)) {
-            $c = 'エンジン取扱説明書';
+            $c = self::ENG_OM;
         } elseif (preg_match('/^\d{1}\w+-\w{6}/', $book_name)) {
-            $c = 'エンジンパーツマニュアル';
+            $c = self::ENG_PARTS;
         } elseif (preg_match('/SN/', $book_name)) {
-            $c = 'サービスニュース';
+            $c = self::SN;
         } elseif (preg_match('/hij/', $book_name)) {
-            $c = '品質情報連絡表';
+            $c = self::HIJ;
         } elseif (preg_match('/SW/', $book_name)) {
-            $c = 'サービスワークシート';
+            $c = self::SW;
         } elseif (preg_match('/CKAA/', $book_name)) {
-            $c = '改良工事指示書';
+            $c = self::CKAA;
         } elseif (preg_match('/NINKA/', $book_name)) {
-            $c = '許認可';
+            $c = self::NINKA;
         } elseif (preg_match('/MAINTENANCEGUIDE/', $book_name)) {
-            $c = 'メンテナンスガイド';
+            $c = self::GUIDE;
         } elseif (preg_match('/TROUBLENEWS/', $book_name)) {
-            $c = '修理事例集';
+            $c = self::TROUBE;
         } else {
-            $c = 'その他';
+            $c = self::OTHER;
         }
 
         return $c;

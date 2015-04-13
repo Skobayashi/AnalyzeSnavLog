@@ -3,17 +3,20 @@
 
 namespace Asl\Command;
 
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class SummaryBookAccess extends AbstractCommand
+use Asl\Service\Analyzer;
+
+class AnalyzeTotalAccess extends Command
 {
 
     public function configure ()
     {
-        $this->setName('summary-book-access')
-            ->setDescription('アクセスログをブックで集計する');
+        $this->setName('total_access')
+            ->setDescription('指定ログファイルを解析して合計アクセス数を割り出す');
 
         $this->addArgument('log_file', InputArgument::REQUIRED, 'ログファイルへのパスを指定する')
             ->setHelp(sprintf(
@@ -33,18 +36,16 @@ class SummaryBookAccess extends AbstractCommand
 
     protected function execute (InputInterface $input, OutputInterface $output)
     {
-        $this->_iterateLogFile($input, $output);
+        $log_file = $input->getArgument('log_file');
+        $date = $input->getArgument('date');
 
-        arsort($this->summary);
-        foreach ($this->summary as $k => $b) {
-            echo sprintf('"%s","%s"', $k, $b).PHP_EOL;
+        $service = new Analyzer($log_file, $date);
+        $results = $service->analyzeTotalAccess();
+
+        // display
+        foreach ($results as $date => $total) {
+            $output->writeln(sprintf('"%s","%s"', $date, $total));
         }
     }
-
-
-    protected function _parse ($row)
-    {
-        if (! isset($this->summary[$row[$this->conf['book']]])) $this->summary[$row[$this->conf['book']]] = 0;
-        $this->summary[$row[$this->conf['book']]] += $row[$this->conf['access']];
-    }
 }
+

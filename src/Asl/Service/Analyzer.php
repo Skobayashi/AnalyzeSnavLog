@@ -37,21 +37,6 @@ class Analyzer
 
 
     /**
-     * @bool
-     **/
-    private $dry_run = false;
-
-
-    /**
-     * @return void
-     **/
-    public function enableDryRun ()
-    {
-        $this->dry_run = true;
-    }
-
-
-    /**
      * @param  string $log_file
      * @param  string $date
      * @return void
@@ -128,7 +113,6 @@ class Analyzer
             $result[$date] += $row[$this->header['access']];
         });
 
-        $this->_saveAnalyzeFile($result);
         return $result;
     }
 
@@ -250,7 +234,7 @@ class Analyzer
             $result[$date] += $row[$this->header['access']];
         });
 
-        ksort($result);
+        krsort($result);
         return $result;
     }
 
@@ -268,14 +252,45 @@ class Analyzer
             $dates = explode('/', $row[$this->header['date']]);
             $date  = sprintf('%s年%s月', $dates[0], $dates[1]);
 
-            if (! isset($data[$date])) $data[$date] = [];
-            $category = Category::convert($row[$this->header['book']]);
+            if (! isset($data[$date])) {
+                $data[$date] = [
+                    Category::ST        => 0,
+                    Category::SM        => 0,
+                    Category::OPT       => 0,
+                    Category::OM        => 0,
+                    Category::PARTS     => 0,
+                    Category::ENG_SM    => 0,
+                    Category::ENG_OM    => 0,
+                    Category::ENG_PARTS => 0,
+                    Category::SN        => 0,
+                    Category::SW        => 0,
+                    Category::HIJ       => 0,
+                    Category::CKAA      => 0,
+                    Category::NINKA     => 0,
+                    Category::GUIDE     => 0,
+                    Category::TROUBE    => 0,
+                    Category::OTHER     => 0,
+                ];
+            }
 
-            if (! isset($data[$date][$category])) $data[$date][$category] = 0;
+            $category = Category::convert($row[$this->header['book']]);
             $data[$date][$category] += $row[$this->header['access']];
         });
 
-        return $data;
+        $results = [];
+        foreach ($data as $date => $categories) {
+            if (! isset($results[0])) $results[0] = ',';
+            $results[0] .= sprintf('"%s",', $date);
+
+            $i = 1;
+            foreach ($categories as $category => $val) {
+                if (! isset($results[$i])) $results[$i] = sprintf('"%s",', $category);
+                $results[$i] .= sprintf('"%s",', $val);
+                $i++;
+            }
+        }
+
+        return $results;
     }
 
 
@@ -294,18 +309,6 @@ class Analyzer
 
             $analyze($row);
         }
-    }
-
-
-    /**
-     * 分析した結果をファイルとして保存する
-     *
-     * @param  array $data
-     * @return void
-     **/
-    private function _saveAnalyzeFile ($data)
-    {
-        if ($this->dry_run) return;
     }
 }
 

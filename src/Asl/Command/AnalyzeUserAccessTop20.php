@@ -10,13 +10,13 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 use Asl\Service\Analyzer;
 
-class Analyze extends Command
+class AnalyzeUserAccessTop20 extends Command
 {
 
     public function configure ()
     {
-        $this->setName('analyze')
-            ->setDescription('ログファイルを解析して成果ファイルをデスクトップのSnavディレクトリに吐き出す');
+        $this->setName('user_access_top20')
+            ->setDescription('指定ログファイルを解析してユーザアクセス数Top20を割り出す');
 
         $this->addArgument('log_file', InputArgument::REQUIRED, 'ログファイルへのパスを指定する')
             ->setHelp(sprintf(
@@ -40,28 +40,30 @@ class Analyze extends Command
         $date = $input->getArgument('date');
 
         $service = new Analyzer($log_file, $date);
+        $results = $service->analyzeUserAccessTop20();
 
-        $this->_iterateLogFile($input, $output);
+        $summary = [];
+        foreach ($results as $date => $users) {
+            if (! isset($summary[0])) $summary[0] = '';
+            $summary[0] .= sprintf('"%s","","",', $date);
 
-        foreach ($this->summary as $user => $books) {
-            echo sprintf('"%s (%s件)",', $user, count($books));
-
-            sort($books);
-            foreach ($books as $k => $b) {
-                if ($k != 0) echo ',';
-                echo sprintf('"%s"', $b).PHP_EOL;
+            $i = 1;
+            foreach ($users as $user => $value) {
+                if (! isset($summary[$i])) $summary[$i] = '';
+                $summary[$i] .= sprintf('"%s","%s","",', $user, $value);
+                $i++;
             }
 
-            echo PHP_EOL;
+            if ($i != 21) {
+                for (; $i < 21; $i++) {
+                    $summary[$i] .= '"","","",';
+                }
+            }
         }
-    }
 
-
-    protected function _parse ($row)
-    {
-        if (! isset($this->summary[$row[$this->conf['user']]])) $this->summary[$row[$this->conf['user']]] = [];
-        if (! in_array($row[$this->conf['book']], $this->summary[$row[$this->conf['user']]])) {
-            $this->summary[$row[$this->conf['user']]][] = $row[$this->conf['book']];
+        foreach ($summary as $s) {
+            $output->writeln($s);
         }
     }
 }
+

@@ -47,7 +47,6 @@ class AnalyzerTest extends \PHPUnit_Framework_TestCase
         $log = ROOT.DS.$this->log_file;
 
         $service = new Analyzer($log, '2015/04');
-        $service->enableDryRun();
         $result  = $service->analyzeTotalAccess();
 
         $this->assertEquals(1, count($result));
@@ -56,7 +55,6 @@ class AnalyzerTest extends \PHPUnit_Framework_TestCase
 
 
         $service = new Analyzer($log);
-        $service->enableDryRun();
         $result  = $service->analyzeTotalAccess();
 
         $this->assertEquals(3, count($result));
@@ -73,7 +71,6 @@ class AnalyzerTest extends \PHPUnit_Framework_TestCase
         $log = ROOT.DS.$this->log_file;
 
         $service = new Analyzer($log, '2015/04');
-        $service->enableDryRun();
         $result  = $service->analyzeUserAccess();
 
         $this->assertEquals(1, count($result));
@@ -81,7 +78,6 @@ class AnalyzerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(5, $result['2015年04月']);
 
         $service = new Analyzer($log);
-        $service->enableDryRun();
         $result  = $service->analyzeUserAccess();
 
         $this->assertEquals(3, count($result));
@@ -101,7 +97,6 @@ class AnalyzerTest extends \PHPUnit_Framework_TestCase
         $log = ROOT.DS.'data'.DS.'top20.log.csv';
 
         $service = new Analyzer($log, '2014/01');
-        $service->enableDryRun();
         $result = $service->analyzeBookAccessTop20();
 
         $this->assertArrayHasKey('2014年01月', $result);
@@ -119,7 +114,6 @@ class AnalyzerTest extends \PHPUnit_Framework_TestCase
         $log = ROOT.DS.'data'.DS.'top20.log.csv';
 
         $service = new Analyzer($log, '2014/02');
-        $service->enableDryRun();
         $result = $service->analyzeUserAccessTop20();
 
         $this->assertArrayHasKey('2014年02月', $result);
@@ -137,7 +131,6 @@ class AnalyzerTest extends \PHPUnit_Framework_TestCase
         $log = ROOT.DS.'data'.DS.'date.log.csv';
 
         $service = new Analyzer($log, '2015/04');
-        $service->enableDryRun();
         $result = $service->analyzeUserDateAccess();
 
         $this->assertEquals(10, count($result));
@@ -154,11 +147,9 @@ class AnalyzerTest extends \PHPUnit_Framework_TestCase
         $log = ROOT.DS.'data'.DS.'category.log.csv';
 
         $service = new Analyzer($log, '2015/04');
-        $service->enableDryRun();
         $result = $service->analyzeBookCategory();
 
-        $this->assertArrayHasKey('2015年04月', $result);
-        $this->assertEquals(7, count($result['2015年04月']));
+        $this->assertEquals(17, count($result));
     }
 }
 

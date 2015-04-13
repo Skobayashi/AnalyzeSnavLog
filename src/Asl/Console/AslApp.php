@@ -19,7 +19,12 @@ class AslApp extends Application
     {
         parent::__construct(APP.' -- ', VERSION);
 
-        $this->add(new Command\Analyze());
+        $this->add(new Command\AnalyzeTotalAccess());
+        $this->add(new Command\AnalyzeUserAccess());
+        $this->add(new Command\AnalyzeBookAccessTop20());
+        $this->add(new Command\AnalyzeUserAccessTop20());
+        $this->add(new Command\AnalyzeUserDateAccess());
+        $this->add(new Command\AnalyzeBookCategoryAccess());
     }
 }
 

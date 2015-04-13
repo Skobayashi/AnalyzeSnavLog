@@ -24,6 +24,12 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
         $book = 'PMACS_WCLA240A30LM_000_240A3-5001';
         $this->assertEquals('パーツマニュアル', Category::convert($book));
 
+        $book = 'WCL0751-00_002';
+        $this->assertEquals('パーツマニュアル', Category::convert($book));
+
+        $book = 'WCL135C-00_000';
+        $this->assertEquals('パーツマニュアル', Category::convert($book));
+
         $book = 'WLST0753B-01J';
         $this->assertEquals('サービステキスト', Category::convert($book));
 
@@ -74,6 +80,15 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
 
         $book = 'WDL0806-0K';
         $this->assertEquals('取扱説明書', Category::convert($book));
+
+        $book = 'WDE0120-002';
+        $this->assertEquals('取扱説明書', Category::convert($book));
+
+        $book = 'WHE0060-001';
+        $this->assertEquals('サービスマニュアル', Category::convert($book));
+
+        $book = 'WCLF330L3-6237';
+        $this->assertEquals('パーツマニュアル', Category::convert($book));
     }
 }
 

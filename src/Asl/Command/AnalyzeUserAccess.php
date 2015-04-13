@@ -3,17 +3,20 @@
 
 namespace Asl\Command;
 
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class SummaryDateAccess extends AbstractCommand
+use Asl\Service\Analyzer;
+
+class AnalyzeUserAccess extends Command
 {
 
     public function configure ()
     {
-        $this->setName('summary-date-access')
-            ->setDescription('アクセスログを日付で集計する');
+        $this->setName('user_access')
+            ->setDescription('指定ログファイルを解析して利用者数を割り出す');
 
         $this->addArgument('log_file', InputArgument::REQUIRED, 'ログファイルへのパスを指定する')
             ->setHelp(sprintf(
@@ -33,18 +36,16 @@ class SummaryDateAccess extends AbstractCommand
 
     protected function execute (InputInterface $input, OutputInterface $output)
     {
-        $this->_iterateLogFile($input, $output);
+        $log_file = $input->getArgument('log_file');
+        $date = $input->getArgument('date');
 
-        ksort($this->summary);
-        foreach ($this->summary as $k => $b) {
-            echo sprintf('"%s","%s"', $k, $b).PHP_EOL;
+        $service = new Analyzer($log_file, $date);
+        $results = $service->analyzeUserAccess();
+
+        // display
+        foreach ($results as $date => $total) {
+            $output->writeln(sprintf('"%s","%s"', $date, $total));
         }
     }
-
-
-    protected function _parse ($row)
-    {
-        if (! isset($this->summary[$row[$this->conf['date']]])) $this->summary[$row[$this->conf['date']]] = 0;
-        $this->summary[$row[$this->conf['date']]] += $row[$this->conf['access']];
-    }
 }
+
